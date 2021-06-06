@@ -45,8 +45,8 @@
   const settings = {
     amountWidget: {
       defaultValue: 1,
-      defaultMin: 1,
-      defaultMax: 9,
+      defaultMin: 0,
+      defaultMax: 10,
     }
   };
 
@@ -63,9 +63,10 @@
       thisProduct.getElements();
       thisProduct.initAccordion();
       thisProduct.initOrderForm();
+      thisProduct.initAmountWidget();
       thisProduct.processOrder();
 
-      console.log('new Product: ', thisProduct);
+      //console.log('new Product: ', thisProduct);
     }
     renderInMenu(){
       const thisProduct = this;
@@ -79,6 +80,7 @@
       /* add element to menu */
       menuContainer.appendChild(thisProduct.element);
     }
+
     getElements(){
       const thisProduct = this;
 
@@ -88,6 +90,15 @@
       thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
       thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
       thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);
+      thisProduct.amountWidgetElem = thisProduct.element.querySelector(select.menuProduct.amountWidget);
+    }
+
+    initAmountWidget(){
+      const thisProduct = this;
+      // new class AmountWidget
+      thisProduct.amountWidget = new AmountWidget(thisProduct.amountWidgetElem);
+      // add listerena after 'update' amountWidgetElem and run processOrder method
+      thisProduct.amountWidgetElem.addEventListener('updated',function(){thisProduct.processOrder();})
     }
 
     initAccordion(){
@@ -117,7 +128,6 @@
 
     initOrderForm(){
       const thisProduct = this;
-      console.log('initOrderForm');
 
       thisProduct.form.addEventListener('submit', function(event){
         event.preventDefault();
@@ -139,7 +149,6 @@
 
     processOrder(){
       const thisProduct = this;
-      console.log('processOrder');
 
       // covert form to object structure e.g. { sauce: ['tomato'], toppings: ['olives', 'redPeppers']}
       const formData = utils.serializeFormToObject(thisProduct.form);
@@ -157,10 +166,8 @@
           // check if there is param with a name of paramId in formData and if it includes optionId
 
           // find image link
-          const imageClass = "." + paramId + '-' + optionId;
-          console.log(imageClass);
+          const imageClass = '.' + paramId + '-' + optionId;
           const imageVisible = thisProduct.element.querySelector(imageClass);
-          console.log('Image Link: ', imageVisible);
           const optionSelected = formData[paramId] && formData[paramId].includes(optionId);
 
           if(optionSelected){
@@ -168,9 +175,7 @@
             // when option is chcecked - check if link is not null and add 'active' class
             if(imageVisible){
               imageVisible.classList.add(classNames.menuProduct.imageVisible);
-              console.log('Nowy link: ', imageVisible);
-              }
-
+            }
             // check if the option is default
             if(option.default){
               // price doesn't change
@@ -184,8 +189,7 @@
           } else  {
             // when option is unchcecked - check if link is not null and remove 'active' class
             if(imageVisible){
-            imageVisible.classList.remove(classNames.menuProduct.imageVisible);
-            console.log('Nowy link: ', imageVisible);
+              imageVisible.classList.remove(classNames.menuProduct.imageVisible);
             }
             // check if the option is default
             if(option.default){
@@ -200,8 +204,67 @@
         }
 
       }
+      // multiply price * quantity (from listener)
+      price *= thisProduct.amountWidget.value;
+
       // update calculated price in the HTML
       thisProduct.priceElem.innerHTML = price;
+    }
+  }
+
+  class AmountWidget{
+    constructor(element){
+      const thisWidget = this;
+      thisWidget.getElements(element);
+      thisWidget.setValue(settings.amountWidget.defaultValue);
+      thisWidget.initActions();
+
+      console.log('AmountWidget: ', thisWidget);
+      console.log('Constructor arguments: ', element);
+    }
+
+    getElements(element){
+      const thisWidget = this;
+
+      thisWidget.element = element;
+      thisWidget.input = thisWidget.element.querySelector(select.widgets.amount.input);
+      thisWidget.linkDecrease = thisWidget.element.querySelector(select.widgets.amount.linkDecrease);
+      thisWidget.linkIncrease = thisWidget.element.querySelector(select.widgets.amount.linkIncrease);
+    }
+
+    setValue(value){
+      const thisWidget = this;
+      const valueMin = settings.amountWidget.defaultMin;
+      const valueMax = settings.amountWidget.defaultMax;
+      const newValue = parseInt(value);
+      // Add validation
+      if(thisWidget.value !== newValue && !isNaN(newValue) && newValue >= valueMin && newValue <= valueMax){
+        thisWidget.value = newValue;
+      }
+      thisWidget.input.value = thisWidget.value;
+      // after proper value run announce method
+      thisWidget.announce();
+    }
+
+    initActions(){
+      const thisWidget = this;
+
+      thisWidget.input.addEventListener('change', function(){thisWidget.setValue(thisWidget.input.value)});
+      thisWidget.linkDecrease.addEventListener('click', function(event){
+        event.preventDefault();
+        thisWidget.setValue(thisWidget.value - 1);
+      });
+      thisWidget.linkIncrease.addEventListener('click', function(event){
+        event.preventDefault();
+        thisWidget.setValue(thisWidget.value + 1);
+      })
+    }
+
+    announce(){
+      const thisWidget = this;
+
+      const event = new Event('updated');
+      thisWidget.element.dispatchEvent(event);
     }
   }
 
