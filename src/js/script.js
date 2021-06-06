@@ -87,6 +87,7 @@
       thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);
       thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
       thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
+      thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);
     }
 
     initAccordion(){
@@ -127,7 +128,7 @@
         input.addEventListener('change', function(){
           thisProduct.processOrder();
         });
-      };
+      }
 
       thisProduct.cartButton.addEventListener('click', function(event){
         event.preventDefault();
@@ -154,18 +155,38 @@
           // determine option value, e.g. optionId = 'olives', option = { label: 'Olives', price: 2, default: true }
           const option = param.options[optionId];
           // check if there is param with a name of paramId in formData and if it includes optionId
-          if(formData[paramId] && formData[paramId].includes(optionId)){
+
+          // find image link
+          const imageClass = "." + paramId + '-' + optionId;
+          console.log(imageClass);
+          const imageVisible = thisProduct.element.querySelector(imageClass);
+          console.log('Image Link: ', imageVisible);
+          const optionSelected = formData[paramId] && formData[paramId].includes(optionId);
+
+          if(optionSelected){
+
+            // when option is chcecked - check if link is not null and add 'active' class
+            if(imageVisible){
+              imageVisible.classList.add(classNames.menuProduct.imageVisible);
+              console.log('Nowy link: ', imageVisible);
+              }
+
             // check if the option is default
             if(option.default){
               // price doesn't change
-              price = price;
+              price;
               // check if the option is not default
             } else {
               // add option price to price variable
               price += option.price;
             }
-             // check if param doesn't check
+            // check if param doesn't check
           } else  {
+            // when option is unchcecked - check if link is not null and remove 'active' class
+            if(imageVisible){
+            imageVisible.classList.remove(classNames.menuProduct.imageVisible);
+            console.log('Nowy link: ', imageVisible);
+            }
             // check if the option is default
             if(option.default){
               // substract option price to price variable
@@ -173,12 +194,12 @@
               // check if the option is not default
             } else {
               // price doesn't change
-              price = price;
+              price;
             }
-          };
+          }
         }
 
-      };
+      }
       // update calculated price in the HTML
       thisProduct.priceElem.innerHTML = price;
     }
