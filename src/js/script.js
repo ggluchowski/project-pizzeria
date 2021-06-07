@@ -98,7 +98,8 @@
       // new class AmountWidget
       thisProduct.amountWidget = new AmountWidget(thisProduct.amountWidgetElem);
       // add listerena after 'update' amountWidgetElem and run processOrder method
-      thisProduct.amountWidgetElem.addEventListener('updated',function(){thisProduct.processOrder();})
+      thisProduct.amountWidgetElem.addEventListener('updated',function(){thisProduct.processOrder();
+      });
     }
 
     initAccordion(){
@@ -116,10 +117,7 @@
           /* if there is active product and it's not thisProduct.element, remove class active from it */
           if(activeProduct != clikElement){
             activeProduct.classList.toggle('active');
-          } /*else if(activeProduct == clikElement){
-            console.log('yyy');
-            activeProduct.classList.toggle('active');
-          }*/
+          }
         }
         /* toggle active class on thisProduct.element */
         thisProduct.element.classList.toggle('active');
@@ -249,7 +247,8 @@
     initActions(){
       const thisWidget = this;
 
-      thisWidget.input.addEventListener('change', function(){thisWidget.setValue(thisWidget.input.value)});
+      thisWidget.input.addEventListener('change', function(){thisWidget.setValue(thisWidget.input.value);
+      });
       thisWidget.linkDecrease.addEventListener('click', function(event){
         event.preventDefault();
         thisWidget.setValue(thisWidget.value - 1);
@@ -257,7 +256,7 @@
       thisWidget.linkIncrease.addEventListener('click', function(event){
         event.preventDefault();
         thisWidget.setValue(thisWidget.value + 1);
-      })
+      });
     }
 
     announce(){
@@ -297,7 +296,4 @@
   };
 
   app.init();
-
-
-
 }
