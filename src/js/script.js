@@ -1,7 +1,5 @@
 /* global Handlebars, utils, dataSource */ // eslint-disable-line no-unused-vars
 
-//const { utils } = require("stylelint");
-
 {
   'use strict';
 
@@ -177,6 +175,11 @@
       thisProduct.dom.cartButton.addEventListener('click', function(event){
         event.preventDefault();
         thisProduct.processOrder();
+        thisProduct.addToCart();
+
+
+
+        //thisProduct.prepareCartProduct();
       });
 
     }
@@ -186,7 +189,6 @@
 
       // covert form to object structure e.g. { sauce: ['tomato'], toppings: ['olives', 'redPeppers']}
       const formData = utils.serializeFormToObject(thisProduct.dom.form);
-
       // set price to default price
       let price = thisProduct.data.price;
       // for every category (param)...
@@ -242,8 +244,62 @@
       price *= thisProduct.amountWidget.value;
 
       // update calculated price in the HTML
+      thisProduct.priceSingle = price / thisProduct.amountWidget.value;
       thisProduct.dom.priceElem.innerHTML = price;
     }
+
+    addToCart(){
+      const thisProduct = this;
+
+      app.cart.add(thisProduct.prepareCartProduct());
+
+    }
+
+    prepareCartProduct(){
+
+      const thisProduct = this;
+
+      const productSummary = {};
+
+      productSummary.id = thisProduct.id;
+      productSummary.name = thisProduct.data.name;
+      productSummary.amount = thisProduct.amountWidget.value;
+      productSummary.priceSingle = thisProduct.priceSingle;
+      productSummary.price = thisProduct.priceSingle * thisProduct.amountWidget.value;
+      productSummary.params = thisProduct.prepareProductParams();
+
+      return productSummary;
+    }
+
+    prepareProductParams(){
+      const thisProduct = this;
+
+      const formData = utils.serializeFormToObject(thisProduct.dom.form);
+
+      // create new ogject productParams
+      const productParams = {};
+
+      for(let paramId in thisProduct.data.params){
+        const param = thisProduct.data.params[paramId];
+
+        productParams[paramId] = {
+          label: param.label,
+          options: {}
+        };
+
+        for(let optionId in param.options){
+          const option = param.options[optionId];
+          const optionSelected = formData[paramId] && formData[paramId].includes(optionId);
+
+          if(optionSelected){
+            productParams[paramId].options[optionId] = option.label;
+          }
+        }
+      }
+      return productParams;
+    }
+
+
   }
 
   class AmountWidget{
@@ -323,6 +379,7 @@
       thisCart.dom = {};
       thisCart.dom.wrapper = element;
       thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
+      thisCart.dom.productList = thisCart.dom.wrapper.querySelector(select.cart.productList);
     }
 
     initActions(){
@@ -334,10 +391,15 @@
 
     }
 
-
-
-
-
+    add(menuProduct){
+      const thisCart = this;
+      /* generate HTML based on template */
+      const generateHTML = templates.cartProduct(menuProduct);
+      /* create element using utils.createElementHTML*/
+      const generateDOM = utils.createDOMFromHTML(generateHTML);
+      /* add element to menu*/
+      thisCart.dom.productList.appendChild(generateDOM);
+    }
   }
 
   const app = {
