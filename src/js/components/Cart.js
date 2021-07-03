@@ -120,8 +120,6 @@ class Cart{
       payload.products.push(prod.getData());
     }
 
-    console.log('Payload: ', payload);
-
     const options = {
       method: 'POST',
       headers: {

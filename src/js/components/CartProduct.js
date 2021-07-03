@@ -52,7 +52,6 @@ class CartProduct{
     });
 
     thisCartProduct.dom.wrapper.dispatchEvent(event);
-    console.log('Remove');
   }
 
   initActions(){

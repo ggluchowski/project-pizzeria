@@ -21,18 +21,15 @@ const app = {
         break;
       }
     }
-    console.log('pageMatchingHash: ', pageMatchingHash);
     thisApp.activatePage(pageMatchingHash);
 
     for(let link of thisApp.navLinks){
       link.addEventListener('click', function(e){
         const clickedElement = this;
-        console.log('Click Element: ', clickedElement);
         e.preventDefault();
 
         /* get page id from href attribute */
         const id = clickedElement.getAttribute('href').replace('#', '');
-        console.log('ID: ', id);
         /* run thisApp.activatePage wiith that id */
         thisApp.activatePage(id);
         /* change URL hash */
@@ -58,7 +55,6 @@ const app = {
   },
   initMenu: function () {
     const thisApp = this;
-    console.log('thisApp.data: ', thisApp.data);
 
     for (let productData in thisApp.data.products) {
       new Product(thisApp.data.products[productData].id, thisApp.data.products[productData]);
@@ -75,15 +71,11 @@ const app = {
         return rawResponse.json();
       })
       .then(function (parseResponse) {
-        console.log('parseResponse', parseResponse);
-
         /* save parseResponse as thisApp.data.products */
         thisApp.data.products = parseResponse;
         /* execute initMenu method */
         thisApp.initMenu();
       });
-
-    console.log('thisApp.data: ', JSON.stringify(thisApp.data));
 
   },
   init: function () {
@@ -117,7 +109,6 @@ const app = {
     const thisApp = this;
 
     thisApp.booking = document.querySelector(select.containerOf.booking);
-    console.log('XXX: ', thisApp.booking);
     const booking = new Booking(thisApp.booking);
     console.log('Booking: ', booking);
   },
