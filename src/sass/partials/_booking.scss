@@ -118,6 +118,12 @@
     box-shadow: 0 0 12px rgba(0,0,0,0.2);
   }
 
+  .chosen {
+    @extend .object;
+    background: greenyellow;
+    border: 2px solid green;
+  }
+
   .entry {
     bottom: -24px;
     left: 50%;
@@ -154,6 +160,7 @@
       &::after {
         border-radius: 50%;
       }
+
 
     }
 
