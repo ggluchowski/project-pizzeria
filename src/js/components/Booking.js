@@ -318,51 +318,18 @@ class Booking {
       body: JSON.stringify(tableLoad),
     };
 
-    Promise.all([
-      fetch(url, options),
-    ])
-      .then(function(response){
-        const bookingResponse = response[0];
-        return Promise.all([
-          bookingResponse.json(),
-        ]);
 
+    fetch(url, options)
+      .then(function(response){
+        return response.json();
       })
-      .then(function([booking]){
-        console.log('parsedResponse', booking);
+      .then(function(parsedResponse){
+        console.log('parsedResponse', parsedResponse);
       });
 
 
     thisBooking.makeBooked(tableLoad.date, tableLoad.hour, tableLoad.duration, tableLoad.table);
     console.log('CCC: ', thisBooking);
-
-
-    // Promise.all([
-    //   fetch(urls.bookings),
-    //   fetch(urls.eventsCurrent),
-    //   fetch(urls.eventsRepeat),
-    // ])
-    //   .then(function(allResponses){
-    //     const bookingsResponse = allResponses[0];
-    //     const eventsCurrentResponse = allResponses[1];
-    //     const eventsRepeatResponse = allResponses[2];
-    //     return Promise.all([
-    //       bookingsResponse.json(),
-    //       eventsCurrentResponse.json(),
-    //       eventsRepeatResponse.json(),
-    //     ]);
-
-    //   })
-    //   .then(function([bookings, eventsCurrent, eventsRepeat]){
-    //     //console.log(bookings);
-    //     //console.log(eventsCurrent);
-    //     //console.log(eventsRepeat);
-    //     thisBooking.parseData(bookings, eventsCurrent, eventsRepeat);
-    //   });
-
-
-
-
 
   }
 
