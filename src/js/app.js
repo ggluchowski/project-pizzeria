@@ -2,6 +2,7 @@ import { settings, select, classNames, templates } from './settings.js';
 import Product from './components/Product.js';
 import Cart from './components/Cart.js';
 import Booking from './components/Booking.js';
+import HomePage from './components/HomePage.js';
 
 const app = {
   initPages: function () {
@@ -9,18 +10,19 @@ const app = {
 
     thisApp.pages = document.querySelector(select.containerOf.pages).children;
     thisApp.navLinks = document.querySelectorAll(select.nav.links);
+    thisApp.homeNavLinks = document.querySelectorAll(select.nav.homeNavLinks);
 
     // zaladowanie ostatniej strony, ktora ma byc otwarta jako domyslna
-    const idFromHash = window.location.hash.replace('#/', '');
+    //const idFromHash = window.location.hash.replace('#/', '');
     // domyslne ladowanie 1 eleementu, gdy nic nie było klikniete
     let pageMatchingHash = thisApp.pages[0].id;
 
-    for(let page of thisApp.pages){
-      if(page.id == idFromHash){
-        pageMatchingHash = page.id;
-        break;
-      }
-    }
+    // for(let page of thisApp.pages){
+    //   if(page.id == idFromHash){
+    //     pageMatchingHash = page.id;
+    //     break;
+    //   }
+    // }
     thisApp.activatePage(pageMatchingHash);
 
     for(let link of thisApp.navLinks){
@@ -37,7 +39,24 @@ const app = {
 
       });
     }
+
+    for(let link of thisApp.homeNavLinks){
+      link.addEventListener('click', function(e){
+        const clickedElement = this;
+        e.preventDefault();
+
+        /* get page id from href attribute */
+        const id = clickedElement.getAttribute('href').replace('#', '');
+        /* run thisApp.activatePage wiith that id */
+        thisApp.activatePage(id);
+        /* change URL hash */
+        window.location.hash = '#/' + id;
+
+      });
+    }
   },
+
+
   activatePage: function (pageId) {
     const thisApp = this;
     /* add class 'active' to matching pages, remove from non-matching*/
@@ -86,10 +105,12 @@ const app = {
     console.log('settings:', settings);
     console.log('templates:', templates);
 
+    thisApp.initHomePage();
     thisApp.initPages();
     thisApp.initData();
     thisApp.initCart();
     thisApp.initBooking();
+
 
   },
   initCart: function () {
@@ -112,6 +133,13 @@ const app = {
     const booking = new Booking(thisApp.booking);
     console.log('Booking: ', booking);
   },
+
+  initHomePage: function(){
+    const thisApp = this;
+    thisApp.homePage = document.querySelector(select.containerOf.homePage);
+    const homePage = new HomePage(thisApp.homePage);
+    console.log('HomePage: ', homePage);
+  }
 };
 
 app.init();
