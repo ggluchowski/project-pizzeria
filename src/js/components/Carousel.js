@@ -1,23 +1,16 @@
+/* global Flickity*/
 class Carousel{
   constructor(element){
     const thisCarousel = this;
     thisCarousel.element = element;
-    thisCarousel.render(element);
     thisCarousel.initCarusel();
 
-  }
-
-  render(element){
-    const thisCarousel = this;
-
-    thisCarousel.carousel = element;
   }
 
   initCarusel(){
     const thisCarousel = this;
 
-    // eslint-disable-next-line no-undef
-    const flkty = new Flickity(thisCarousel.carousel, {
+    const flkty = new Flickity(thisCarousel.element, {
       // options
       cellAlign: 'left',
       contain: true,

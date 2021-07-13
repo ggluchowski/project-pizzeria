@@ -13,9 +13,6 @@ class Booking {
     thisBooking.initWidgets();
     thisBooking.getData();
 
-
-
-
   }
 
   getData(){
